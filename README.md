@@ -1,11 +1,12 @@
 # Reseau_tp_1
 
->> Pour un PC Windows, on utilise la commande [ipconfig /all]
--> ipconfig /all
+>> Pour un PC Windows, on utilise la commande **ipconfig /all** :
+``````
+ipconfig /all
+``````
 
-
-I. Exploration locale en solo
-1. Affichage d'informations sur la pile TCP/IP locale
+## I. Exploration locale en solo
+### 1. Affichage d'informations sur la pile TCP/IP locale
 
 🌞 Affichez les infos des cartes réseau de votre PC
 > Pour l'interface wifi :
@@ -44,8 +45,10 @@ Adresse IPv4: 10.33.48.146
 Passerelle par défaut IPv4: 10.33.51.254
 ```
 
-2. Modifications des informations
-    A. Modification d'adresse IP (part 1)
+### 2. Modifications des informations
+
+A. Modification d'adresse IP (part 1)
+
 🌞 Utilisez l'interface graphique de votre OS pour changer d'adresse IP :
 > On refait le même schéma que pour afficher les informations de la cart IP mais on change les propriétés.
 
@@ -53,11 +56,11 @@ Passerelle par défaut IPv4: 10.33.51.254
 > Il est possible de perdre l'accès internet car si on a exactement la même adresse qu'un autre utilisateur, il ne peut pas envoyer sur les deux mêmes utilisateurs.
 
 
-II. Exploration locale en duo
+## II. Exploration locale en duo
 
-3. Modification d'adresse IP
+### 3. Modification d'adresse IP
 🌞 Modifiez l'IP des deux machines pour qu'elles soient dans le même réseau
-> En faisant [Panneau de configuration/Réseau et Internet/Connexion réseau/Ethernet] on modifie l'adresse IP dans les [Propriétés/Protocole Internet version 4 (TCP/IPv4)] avec l'adresse IPv4 : 10.10.10.24 et le masque de sous-réseau IPv4 : 255.255.255.0
+> En faisant **[Panneau de configuration/Réseau et Internet/Connexion réseau/Ethernet]** on modifie l'adresse IP dans les **[Propriétés/Protocole Internet version 4 (TCP/IPv4)]** avec l'adresse IPv4 : 10.10.10.24 et le masque de sous-réseau IPv4 : 255.255.255.0
 
 🌞 Vérifier à l'aide d'une commande que votre IP a bien été changée
  En retournant dans le PowerShell :
@@ -90,5 +93,8 @@ Interface : 10.10.10.24 --- 0x14
   10.10.10.20           84-69-93-59-20-70     dynamique
 ```
 
-4. Petit chat privé
+### 4. Petit chat privé
 
+## III. Manipulations d'autres outils/protocoles côté client
+
+## 1.DHCP
