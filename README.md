@@ -1,12 +1,12 @@
-# Reseau_tp_1
+# <span style="color:red">Réseau - TP 1
 
 >> Pour un PC Windows, on utilise la commande **ipconfig /all** :
 ``````
 ipconfig /all
 ``````
 
-## I. Exploration locale en solo
-### 1. Affichage d'informations sur la pile TCP/IP locale
+## <span style="color:orangered">I. Exploration locale en solo
+### <span style="color:springgreen">1. Affichage d'informations sur la pile TCP/IP locale
 
 🌞 Affichez les infos des cartes réseau de votre PC
 > Pour l'interface wifi :
@@ -45,7 +45,7 @@ Adresse IPv4: 10.33.48.146
 Passerelle par défaut IPv4: 10.33.51.254
 ```
 
-### 2. Modifications des informations
+### <span style="color:springgreen">2. Modifications des informations
 
 A. Modification d'adresse IP (part 1)
 
@@ -56,9 +56,9 @@ A. Modification d'adresse IP (part 1)
 > Il est possible de perdre l'accès internet car si on a exactement la même adresse qu'un autre utilisateur, il ne peut pas envoyer sur les deux mêmes utilisateurs.
 
 
-## II. Exploration locale en duo
+## <span style="color:orangered">II. Exploration locale en duo
 
-### 3. Modification d'adresse IP
+### <span style="color:springgreen">3. Modification d'adresse IP
 🌞 Modifiez l'IP des deux machines pour qu'elles soient dans le même réseau
 > En faisant **[Panneau de configuration/Réseau et Internet/Connexion réseau/Ethernet]** on modifie l'adresse IP dans les **[Propriétés/Protocole Internet version 4 (TCP/IPv4)]** avec l'adresse IPv4 : 10.10.10.24 et le masque de sous-réseau IPv4 : 255.255.255.0
 
@@ -93,8 +93,90 @@ Interface : 10.10.10.24 --- 0x14
   10.10.10.20           84-69-93-59-20-70     dynamique
 ```
 
-### 4. Petit chat privé
+### <span style="color:springgreen">4. Petit chat privé
+🌞 sur le PC serveur
+```
+$ nc.exe -l -p 8833
+```
 
-## III. Manipulations d'autres outils/protocoles côté client
+🌞 sur le PC client
+```
+$ nc.exe 10.10.10.24 8833
+[message]
+```
 
-## 1.DHCP
+🌞 Visualiser la connexion en cours
+```
+$ netstat -a -n -b | Select-String 8833
+TCP    10.10.10.20:8833       10.10.10.24:54261      ESTABLISHED
+```
+
+🌞 Pour aller un peu plus loin
+```
+$ nc.exe -l -p 8833 -s 10.10.10.20
+[message]
+```
+
+
+## <span style="color:orangered">III. Manipulations d'autres outils/protocoles côté client
+
+### <span style="color:springgreen">1.DHCP
+🌞Exploration du DHCP, depuis votre PC
+```
+$ ipconfig /all
+adresse ip du serveur DHCP du réseau wifi ynov :
+10.33.51.254
+date d'expiration de votre bail DHCP :
+mardi 17 octobre 2023 13:27:28
+```
+
+🌞** Trouver l'adresse IP du serveur DNS que connaît votre ordinateur**
+```
+$ ipconfig /all
+adresse IP du serveur DNS :
+10.33.10.2
+```
+
+🌞 Utiliser, en ligne de commande l'outil nslookup (Windows, MacOS) ou dig (GNU/Linux, MacOS) pour faire des requêtes DNS à la main
+**Pour *google.com* :**
+```
+$ nslookup
+$ google.com
+Nom :    google.com
+Addresses:  2a00:1450:4007:819::200e
+          142.250.179.110
+```
+
+**Pour *ynov.com* :**
+```
+$ nslookup
+$ ynov.com
+Nom :    ynov.com
+Addresses:  2606:4700:20::681a:be9
+          2606:4700:20::ac43:4ae2
+          2606:4700:20::681a:ae9
+          172.67.74.226
+          104.26.10.233
+          104.26.11.233
+```
+
+**Pour l'adresse *231.34.113.12* :**
+```
+$ nslookup
+$ 231.34.113.12
+Serveur :   UnKnown
+Address:  fe80::887:c7ff:fed5:d764
+
+*** UnKnown ne parvient pas à trouver 231.34.113.12 : Non-existent domain
+```
+
+**Pour l'adresse *78.34.2.17* :**
+```
+$ nslookup
+$ 78.34.2.17
+Serveur :   UnKnown
+Address:  fe80::887:c7ff:fed5:d764
+
+Nom :    cable-78-34-2-17.nc.de
+Address:  78.34.2.17
+```
