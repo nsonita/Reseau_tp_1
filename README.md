@@ -1,6 +1,6 @@
 # <span style="color:red">Réseau - TP 1
 
->> Pour un PC Windows, on utilise la commande **ipconfig /all** :
+>> Pour un PC Windows, on utilise la commande ```ipconfig /all``` :
 ``````
 ipconfig /all
 ``````
@@ -38,7 +38,7 @@ Interface : 10.33.48.146 --- 0xe
   ``````
 
 🌞 Trouvez comment afficher les informations sur une carte IP (change selon l'OS)
-> En faisant [Panneau de configuration/Réseau et Internet/Centre Réseau et partage/Etat de Wi-Fi], on retrouve ces informations :
+> En faisant **[Panneau de configuration/Réseau et Internet/Centre Réseau et partage/Etat de Wi-Fi]**, on retrouve ces informations :
 ```
 Adresse physique: C8-B2-9B-61-44-0F
 Adresse IPv4: 10.33.48.146
@@ -138,7 +138,7 @@ adresse IP du serveur DNS :
 ```
 
 🌞 Utiliser, en ligne de commande l'outil nslookup (Windows, MacOS) ou dig (GNU/Linux, MacOS) pour faire des requêtes DNS à la main
-**Pour *google.com* :**
+> Pour ```google.com``` :
 ```
 $ nslookup
 $ google.com
@@ -147,7 +147,7 @@ Addresses:  2a00:1450:4007:819::200e
           142.250.179.110
 ```
 
-**Pour *ynov.com* :**
+> Pour ```ynov.com``` :
 ```
 $ nslookup
 $ ynov.com
@@ -160,7 +160,7 @@ Addresses:  2606:4700:20::681a:be9
           104.26.11.233
 ```
 
-**Pour l'adresse *231.34.113.12* :**
+> Pour l'adresse ```231.34.113.12``` :
 ```
 $ nslookup
 $ 231.34.113.12
@@ -170,7 +170,7 @@ Address:  fe80::887:c7ff:fed5:d764
 *** UnKnown ne parvient pas à trouver 231.34.113.12 : Non-existent domain
 ```
 
-**Pour l'adresse *78.34.2.17* :**
+> Pour l'adresse ```78.34.2.17``` :
 ```
 $ nslookup
 $ 78.34.2.17
