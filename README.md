@@ -116,6 +116,30 @@ TCP    10.10.10.20:8833       10.10.10.24:54261      ESTABLISHED
 $ nc.exe -l -p 8833 -s 10.10.10.20
 [message]
 ```
+### <span style="color:springgreen">5. Firewall
+🌞 Activez et configurez votre firewall
+> [Par-feu Windows Defender/Règle entrant/Nouvelle règle/Personnalisé/Tous les programmes/Type de protocole/IMCPV4/Perso//Certaians types ICMP/Requête d'écho/Type 8/Ces adresses IP 192.168.137.4/Autoriser la connexion/Domaine,Privé,Public/Nom : Ping]
+
+
+### <span style="color:springgreen">6. Utilisation d'un des deux comme gateway
+🌞Tester l'accès internet
+> [Pare-feu Windows Defender/Règle de sécurité de connexion/Nouvelle règle/Tunnel/Client-à-passerelle(ou Passerelle-à-client selon le PC connecté)/Exige l'authentification pour les connexions/Ajouter 192.168.137.4/Certificat d'ordinateur]
+
+🌞 Prouver que la connexion Internet passe bien par l'autre PC
+```
+$ ping 1.1.1.1
+
+Envoi d’une requête 'Ping'  1.1.1.1 avec 32 octets de données :
+Délai d’attente de la demande dépassé.
+Réponse de 1.1.1.1 : octets=32 temps=15 ms TTL=56
+Réponse de 1.1.1.1 : octets=32 temps=22 ms TTL=56
+Réponse de 1.1.1.1 : octets=32 temps=25 ms TTL=56
+
+Statistiques Ping pour 1.1.1.1:
+    Paquets : envoyés = 4, reçus = 3, perdus = 1 (perte 25%),
+Durée approximative des boucles en millisecondes :
+    Minimum = 15ms, Maximum = 25ms, Moyenne = 20ms
+```
 
 
 ## <span style="color:orangered">III. Manipulations d'autres outils/protocoles côté client
