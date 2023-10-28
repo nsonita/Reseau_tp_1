@@ -151,3 +151,57 @@ rtt min/avg/max/mdev = 0.903/1.045/1.163/0.107 ms
 10.3.2.11 dev enp0s3 lladdr 08:00:27:47:0b:a8 STALE
 10.3.2.12 dev enp0s3 lladdr 08:00:27:43:54:a7 STALE
 ```
+
+| ordre | type trame  | IP source | MAC source                   | IP destination | MAC destination              |
+| ----- | ----------- | --------- | ---------------------------- | -------------- | ---------------------------- |
+| 1     | Requête ARP | 10.3.2.12 | `marcel` `08:00:27:43:54:a7` | 10.3.1.11      | Broadcast `FF:FF:FF:FF:FF`   |
+| 2     | Réponse ARP | 10.3.1.11 | `john` `08:00:27:47:0b:a8`   | 10.3.2.12      | `marcel` `08:00:27:43:54:a7` |
+| ...   | ...         | ...       | ...                          |                |                              |
+| 3     | Ping        | 10.3.1.254| `routeur` `08:00:27:62:3c:81`| 10.3.1.11      | `john` `08:00:27:47:0b:a8`   |
+| 4     | Pong        | 10.3.2.11 | `john` `08:00:27:47:0b:a8`   | 10.3.1.254     | `routeur` `08:00:27:62:3c:81`|
+
+
+## 3. Accès internet
+
+🌞Donnez un accès internet à vos machines - config routeur
+```
+$ sudo firewall-cmd --add-masquerade --permanent
+success
+$ sudo firewall-cmd --reload
+success
+```
+```
+$ ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=114 time=16.7 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=114 time=16.4 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=114 time=16.5 ms
+```
+
+🌞Donnez un accès internet à vos machines - config clients
+> Route par défaut :
+```
+$ sudo ip route add default via 10.3.1.254 dev enp0s3
+```
+```
+$ ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=113 time=17.6 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=113 time=16.5 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=113 time=17.5 ms
+--- 8.8.8.8 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 16.533/17.232/17.631/0.496 ms
+```
+
+🌞Analyse de trames
+
+| ordre | type trame | IP source            | MAC source                   | IP destination      | MAC destination              |     |
+| ----- | ---------- | -------------------- | ---------------------------- | ------------------- | ---------------------------- | --- |
+| 1     | ping       | `marcel` `10.3.1.12` | `marcel` `08:00:27:43:54:a7` | `8.8.8.8`           | `router` `08:00:27:62:3c:81` |     |
+| 2     | pong       | `router` `10.3.2.254`| `router` `08:00:27:62:3c:81` | `marcel` `10.3.1.12`| `marcel` `08:00:27:43:54:a7` | ... |
+
+
+> [Capture de tp3_routage_lan1.pcap](./tp3_routage_lan1.pcap])
+
+> [Capture de tp3_routage_lan2.pcap](./tp3_routage_lan2.pcap])
