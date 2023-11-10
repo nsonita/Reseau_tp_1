@@ -139,8 +139,124 @@ max-lease-time 7200;
 authoritative;
 
 # Adresse network et masque sous reseau
-subnet 10.4.1.253 netmask 255.255.255.0 {
+subnet 10.4.1.0 netmask 255.255.255.0 {
         range dynamic-bootp 10.4.1.137 10.4.1.237;
         option routers 10.4.1.254;
 }       
+```
+
+> Pour afficher l'état du serveur :
+```
+[sonita@dhcp dhcp]$ sudo systemctl status dhcpd
+● dhcpd.service - DHCPv4 Server Daemon
+     Loaded: loaded (/usr/lib/systemd/system/dhcpd.service; enabled; preset: disabled)
+     Active: active (running) since Fri 2023-11-10 14:33:53 CET; 3min 36s ago
+       Docs: man:dhcpd(8)
+             man:dhcpd.conf(5)
+   Main PID: 1580 (dhcpd)
+     Status: "Dispatching packets..."
+      Tasks: 1 (limit: 11115)
+     Memory: 4.6M
+        CPU: 12ms
+     CGroup: /system.slice/dhcpd.service
+             └─1580 /usr/sbin/dhcpd -f -cf /etc/dhcp/dhcpd.conf -user dhcpd -group dhcpd --n>
+
+Nov 10 14:33:53 dhcp.tp4.b1 dhcpd[1580]: Config file: /etc/dhcp/dhcpd.conf
+Nov 10 14:33:53 dhcp.tp4.b1 dhcpd[1580]: Database file: /var/lib/dhcpd/dhcpd.leases
+Nov 10 14:33:53 dhcp.tp4.b1 dhcpd[1580]: PID file: /var/run/dhcpd.pid
+Nov 10 14:33:53 dhcp.tp4.b1 dhcpd[1580]: Source compiled to use binary-leases
+Nov 10 14:33:53 dhcp.tp4.b1 dhcpd[1580]: Wrote 0 leases to leases file.
+Nov 10 14:33:53 dhcp.tp4.b1 dhcpd[1580]: Listening on LPF/enp0s3/08:00:27:b1:90:55/10.4.1.0/>
+Nov 10 14:33:53 dhcp.tp4.b1 dhcpd[1580]: Sending on   LPF/enp0s3/08:00:27:b1:90:55/10.4.1.0/>
+Nov 10 14:33:53 dhcp.tp4.b1 dhcpd[1580]: Sending on   Socket/fallback/fallback-net
+Nov 10 14:33:53 dhcp.tp4.b1 dhcpd[1580]: Server starting service.
+Nov 10 14:33:53 dhcp.tp4.b1 systemd[1]: Started DHCPv4 Server Daemon.
+```
+
+## 5. Client DHCP
+
+🌞 Test !
+```
+[sonita@node2 ~]$ cd /etc/sysconfig/network-scripts
+[sonita@node2 network-scripts]$ ls
+ifcfg-enp0s3  readme-ifcfg-rh.txt
+[sonita@localhost network-scripts]$ cat ifcfg-enp0s3
+DEVICE=enp0s3
+
+BOOTPROTO=dhcp
+ONBOOT=yes
+```
+
+🌞 Prouvez que
+```
+[sonita@node1 ~]$ nmcli con show "System enp0s3" | grep -i dhcp4
+DHCP4.OPTION[1]:                        dhcp_client_identifier = 01:08:00:27:82:79:8c
+DHCP4.OPTION[2]:                        dhcp_lease_time = 600
+DHCP4.OPTION[3]:                        dhcp_server_identifier = 10.4.1.253
+DHCP4.OPTION[4]:                        expiry = 1699626422
+DHCP4.OPTION[5]:                        ip_address = 10.4.1.137
+```
+
+> ping ```router.tp4.b1``` :
+```
+[sonita@node1 ~]$ ping -c 3 10.4.1.254
+PING 10.4.1.254 (10.4.1.254) 56(84) bytes of data.
+64 bytes from 10.4.1.254: icmp_seq=1 ttl=64 time=0.392 ms
+64 bytes from 10.4.1.254: icmp_seq=2 ttl=64 time=0.544 ms
+64 bytes from 10.4.1.254: icmp_seq=3 ttl=64 time=0.478 ms
+
+--- 10.4.1.254 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2083ms
+rtt min/avg/max/mdev = 0.392/0.471/0.544/0.062 ms
+```
+
+
+> ping ```node2.tp4.b1```
+```
+[sonita@node1 ~]$ ping -c 3 10.4.1.12
+PING 10.4.1.12 (10.4.1.12) 56(84) bytes of data.
+64 bytes from 10.4.1.12: icmp_seq=1 ttl=64 time=0.419 ms
+64 bytes from 10.4.1.12: icmp_seq=2 ttl=64 time=0.461 ms
+64 bytes from 10.4.1.12: icmp_seq=3 ttl=64 time=0.480 ms
+
+--- 10.4.1.12 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2054ms
+rtt min/avg/max/mdev = 0.419/0.453/0.480/0.025 ms
+```
+
+
+🌞 Bail DHCP serveur
+```
+[sonita@dhcp dhcp]$ sudo journalctl -xe -u dhcpd -f
+Nov 10 14:44:15 dhcp.tp4.b1 dhcpd[1580]: DHCPDISCOVER from 08:00:27:82:79:8c via enp0s3
+Nov 10 14:44:16 dhcp.tp4.b1 dhcpd[1580]: DHCPOFFER on 10.4.1.137 to 08:00:27:82:79:8c via enp0s3
+Nov 10 14:44:16 dhcp.tp4.b1 dhcpd[1580]: DHCPREQUEST for 10.4.1.137 (10.4.1.253) from 08:00:27:82:79:8c via enp0s3
+Nov 10 14:44:16 dhcp.tp4.b1 dhcpd[1580]: DHCPACK on 10.4.1.137 to 08:00:27:82:79:8c via enp0s3
+Nov 10 14:46:42 dhcp.tp4.b1 dhcpd[1580]: reuse_lease: lease age 146 (secs) under 25% threshold, reply with unaltered, existing lease for 10.4.1.137
+Nov 10 14:46:42 dhcp.tp4.b1 dhcpd[1580]: DHCPDISCOVER from 08:00:27:82:79:8c via enp0s3
+Nov 10 14:46:42 dhcp.tp4.b1 dhcpd[1580]: DHCPOFFER on 10.4.1.137 to 08:00:27:82:79:8c via enp0s3
+Nov 10 14:46:42 dhcp.tp4.b1 dhcpd[1580]: reuse_lease: lease age 146 (secs) under 25% threshold, reply with unaltered, existing lease for 10.4.1.137
+Nov 10 14:46:42 dhcp.tp4.b1 dhcpd[1580]: DHCPREQUEST for 10.4.1.137 (10.4.1.253) from 08:00:27:82:79:8c via enp0s3
+```
+
+
+
+## 6. Options DHCP
+
+🌞 Nouvelle conf !
+```
+[sonita@dhcp dhcp]$ cat dhcpd.conf
+option domain-name-servers 8.8.8.8
+
+default-lease-time 21600;
+
+max-lease-time 43200;
+
+authoritative;
+
+subnet 10.4.1.0 netmask 255.255.255.0 {
+        range dynamic-bootp 10.4.1.137 10.4.1.237;
+        option routers 10.4.1.254;
+
+}
 ```
