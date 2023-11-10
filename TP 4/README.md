@@ -246,7 +246,7 @@ Nov 10 14:46:42 dhcp.tp4.b1 dhcpd[1580]: DHCPREQUEST for 10.4.1.137 (10.4.1.253)
 🌞 Nouvelle conf !
 ```
 [sonita@dhcp dhcp]$ cat dhcpd.conf
-option domain-name-servers 8.8.8.8
+option domain-name-servers 8.8.8.8;
 
 default-lease-time 21600;
 
@@ -260,3 +260,33 @@ subnet 10.4.1.0 netmask 255.255.255.0 {
 
 }
 ```
+
+🌞 Test !
+> La commande pour demander une nouvelle adresse IP est : ```dhclient```
+> Enregistrement de l'adresse d'un serveur DNS :
+```
+[sonita@node1 ~]$ nmcli con show "System enp0s3" | grep -i dhcp4
+DHCP4.OPTION[1]:                        dhcp_client_identifier = 01:08:00:27:82:79:8c
+DHCP4.OPTION[2]:                        dhcp_lease_time = 21346
+DHCP4.OPTION[3]:                        dhcp_server_identifier = 10.4.1.253
+DHCP4.OPTION[4]:                        domain_name_servers = 8.8.8.8
+DHCP4.OPTION[5]:                        expiry = 1699649527
+DHCP4.OPTION[6]:                        ip_address = 10.4.1.137
+DHCP4.OPTION[24]:                       routers = 10.4.1.254
+```
+
+> Accès Internet :
+```
+[sonita@node1 ~]$ ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=112 time=17.6 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=112 time=17.9 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=112 time=23.2 ms
+^C
+--- 8.8.8.8 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 17.551/19.547/23.170/2.565 ms
+```
+
+🌞 Capture Wireshark
+
