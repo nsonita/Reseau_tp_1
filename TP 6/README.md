@@ -126,7 +126,7 @@ Nov 23 14:44:37 dns.tp6.b1 named[1532]: resolver priming query complete
 ```
 [sonita@dns ~]$ sudo ss -lntpu
 Netid   State    Recv-Q   Send-Q     Local Address:Port      Peer Address:Port   Process
-tcp     LISTEN   0        10            10.6.1.101:53             0.0.0.0:*       users:(("named",pid=1683,fd=21))
+udp     UNCONN   0        0             10.6.1.101:53             0.0.0.0:*       users:(("named",pid=1943,fd=19))
 ```
 
 
@@ -246,3 +246,88 @@ Address:  10.6.1.11
 
 
 # III. Serveur DHCP
+🌞 Installer un serveur DHCP
+```
+[sonita@dhcp dhcp]$ sudo cat dhcpd.conf
+
+option domain-name "dns.tp6.b1";
+
+option domain-name-servers dns.tp6.b1;
+
+default-lease-time 600;
+
+max-lease-time 7200;
+
+authoritative;
+
+subnet 10.6.1.0 netmask 255.255.255.0 {
+        range dynamic-bootp 10.6.1.13 10.6.1.37;
+        option routers 10.6.1.254;
+}
+```
+
+```
+[sonita@dhcp dhcp]$ sudo systemctl status dhcpd
+● dhcpd.service - DHCPv4 Server Daemon
+     Loaded: loaded (/usr/lib/systemd/system/dhcpd.service; enabled; preset: disabled)
+     Active: active (running) since Thu 2023-11-23 19:22:54 CET; 3min 1s ago
+```
+
+
+🌞 Test avec john.tp6.b1
+
+- enlevez-lui son IP statique, et récupérez une IP en DHCP
+```
+[sonita@john ~]$ sudo cat /etc/sysconfig/network-scripts/ifcfg-enp0s3
+DEVICE=enp0s3
+
+BOOTPROTO=dhcp
+ONBOOT=yes
+```
+
+- prouvez-que
+    - vous avez une IP dans la bonne range
+    - vous avez votre routeur configuré automatiquement comme passerelle
+    - vous avez votre serveur DNS automatiquement configuré
+
+
+```
+[sonita@john ~]$ sudo nmcli con show "System enp0s3" | grep -i dhcp4
+DHCP4.OPTION[1]:                        dhcp_client_identifier = 01:08:00:27:84:0d:07
+DHCP4.OPTION[3]:                        dhcp_server_identifier = 10.6.1.102
+DHCP4.OPTION[4]:                        domain_name = dns.tp6.b1
+DHCP4.OPTION[5]:                        domain_name_servers = 10.6.1.101
+DHCP4.OPTION[7]:                        ip_address = 10.6.1.13
+DHCP4.OPTION[25]:                       routers = 10.6.1.254
+```
+
+- vous avez une IP dans la bonne range
+```
+[sonita@john ~]$ ping google.com
+PING google.com (172.217.20.206) 56(84) bytes of data.
+64 bytes from waw02s08-in-f14.1e100.net (172.217.20.206): icmp_seq=1 ttl=117 time=13.2 ms
+64 bytes from par10s50-in-f14.1e100.net (172.217.20.206): icmp_seq=2 ttl=117 time=13.0 ms
+64 bytes from waw02s08-in-f206.1e100.net (172.217.20.206): icmp_seq=3 ttl=117 time=15.8 ms
+--- google.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 13.022/14.022/15.839/1.286 ms
+```
+
+🌞 Requête web avec john.tp6.b1
+- utilisez la commande curl pour faire une requête HTTP vers le site de votre choix
+- par exemple curl www.ynov.com
+
+```
+[sonita@john ~]$ curl www.ynov.com
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>302 Found</title>
+</head><body>
+<h1>Found</h1>
+<p>The document has moved <a href="https://www.ynov.com/">here</a>.</p>
+<hr>
+<address>Apache/2.4.41 (Ubuntu) Server at ynov.com Port 80</address>
+</body></html>
+```
+
+🦈 Capture tp6_web.pcapng

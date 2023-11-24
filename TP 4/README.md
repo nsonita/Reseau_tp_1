@@ -177,9 +177,6 @@ Nov 10 14:33:53 dhcp.tp4.b1 systemd[1]: Started DHCPv4 Server Daemon.
 
 🌞 Test !
 ```
-[sonita@node2 ~]$ cd /etc/sysconfig/network-scripts
-[sonita@node2 network-scripts]$ ls
-ifcfg-enp0s3  readme-ifcfg-rh.txt
 [sonita@localhost network-scripts]$ cat ifcfg-enp0s3
 DEVICE=enp0s3
 
@@ -289,4 +286,4 @@ rtt min/avg/max/mdev = 17.551/19.547/23.170/2.565 ms
 ```
 
 🌞 Capture Wireshark
-
+(Machines perdues depuis la réinitialisation de mon OS ☹️)
